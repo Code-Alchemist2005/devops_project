@@ -1,0 +1,47 @@
+[
+  {
+    "id": "1",
+    "name": "Arjun Sharma",
+    "role": "Software Engineer",
+    "department": "Engineering",
+    "email": "arjun@company.com",
+    "status": "Active",
+    "joinDate": "2023-03-15"
+  },
+  {
+    "id": "2",
+    "name": "Priya Nair",
+    "role": "Product Manager",
+    "department": "Product",
+    "email": "priya@company.com",
+    "status": "Active",
+    "joinDate": "2022-08-01"
+  },
+  {
+    "id": "3",
+    "name": "Rohan Mehta",
+    "role": "DevOps Engineer",
+    "department": "Engineering",
+    "email": "rohan@company.com",
+    "status": "Active",
+    "joinDate": "2023-01-10"
+  },
+  {
+    "id": "4",
+    "name": "Sneha Kulkarni",
+    "role": "UI/UX Designer",
+    "department": "Design",
+    "email": "sneha@company.com",
+    "status": "On Leave",
+    "joinDate": "2022-11-20"
+  },
+  {
+    "id": "1779442020120",
+    "name": "siddagouda",
+    "role": "devops",
+    "department": "Finance",
+    "email": "siddu@gmail.com",
+    "status": "On Leave",
+    "joinDate": "2026-05-22"
+  }
+]

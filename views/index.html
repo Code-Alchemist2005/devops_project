@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EMS — Employee Management System</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --card: #16161f;
+      --border: #2a2a3a;
+      --accent: #00e5ff;
+      --accent2: #7c3aed;
+      --success: #00e676;
+      --warn: #ffab00;
+      --danger: #ff1744;
+      --text: #e8e8f0;
+      --muted: #6b6b8a;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Syne', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      position: relative;
+      z-index: 10;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,10,15,0.9);
+      backdrop-filter: blur(20px);
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono);
+      font-size: 12px; font-weight: 700;
+      color: #000;
+    }
+
+    .logo-text {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .logo-text span { color: var(--accent); }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .status-dot {
+      width: 6px; height: 6px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* ─── MAIN LAYOUT ─── */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 40px;
+    }
+
+    /* ─── PAGE TITLE ─── */
+    .page-title {
+      margin-bottom: 40px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .page-title h1 {
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1;
+      background: linear-gradient(90deg, var(--text) 60%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-title p {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+      letter-spacing: 1px;
+    }
+
+    /* ─── STATS ROW ─── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .stat-card:hover { border-color: var(--accent); }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .stat-card:hover::before { opacity: 1; }
+
+    .stat-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    /* ─── CONTROLS ─── */
+    .controls {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    .search-box {
+      flex: 1;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px 12px 42px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus { border-color: var(--accent); }
+    .search-box input::placeholder { color: var(--muted); }
+
+    .search-icon {
+      position: absolute;
+      left: 14px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .btn-add {
+      background: linear-gradient(135deg, var(--accent), #0099bb);
+      border: none;
+      border-radius: 10px;
+      padding: 12px 24px;
+      color: #000;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-add:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(0,229,255,0.25);
+    }
+
+    /* ─── TABLE ─── */
+    .table-wrapper {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      padding: 14px 20px;
+      text-align: left;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+      animation: rowIn 0.4s ease both;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(0,229,255,0.03); }
+
+    @keyframes rowIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    td {
+      padding: 16px 20px;
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    .emp-name {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    .emp-email {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .dept-badge {
+      background: rgba(124,58,237,0.15);
+      border: 1px solid rgba(124,58,237,0.3);
+      color: #a78bfa;
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    .status-badge {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .status-active {
+      background: rgba(0,230,118,0.1);
+      border: 1px solid rgba(0,230,118,0.25);
+      color: var(--success);
+    }
+
+    .status-leave {
+      background: rgba(255,171,0,0.1);
+      border: 1px solid rgba(255,171,0,0.25);
+      color: var(--warn);
+    }
+
+    .status-inactive {
+      background: rgba(255,23,68,0.1);
+      border: 1px solid rgba(255,23,68,0.25);
+      color: var(--danger);
+    }
+
+    .btn-delete {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 12px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-delete:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+      background: rgba(255,23,68,0.05);
+    }
+
+    /* ─── EMPTY STATE ─── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+
+    .empty-state .icon { font-size: 36px; margin-bottom: 12px; }
+
+    /* ─── MODAL ─── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px;
+      width: 480px;
+      max-width: 95vw;
+      animation: modalIn 0.25s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal h2 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .modal-sub {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group.full { grid-column: 1 / -1; }
+
+    .form-group label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .form-group input,
+    .form-group select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus { border-color: var(--accent); }
+
+    .form-group select option { background: var(--card); }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .btn-cancel {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 22px;
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-cancel:hover { border-color: var(--text); color: var(--text); }
+
+    .btn-submit {
+      background: linear-gradient(135deg, var(--accent), #0099bb);
+      border: none;
+      border-radius: 10px;
+      padding: 11px 28px;
+      color: #000;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,229,255,0.3); }
+
+    /* ─── TOAST ─── */
+    .toast {
+      position: fixed;
+      bottom: 30px; right: 30px;
+      background: var(--card);
+      border: 1px solid var(--success);
+      border-radius: 10px;
+      padding: 14px 20px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--success);
+      z-index: 200;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s;
+    }
+
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Join date column hidden on small screens */
+    @media (max-width: 768px) {
+      .hide-sm { display: none; }
+      main { padding: 24px 16px; }
+      header { padding: 0 16px; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .page-title h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">EMS</div>
+      <div class="logo-text"><span>Employee</span> Management System</div>
+    </div>
+    <div class="header-right">
+      <div class="status-dot"></div>
+      SYSTEM ONLINE
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main>
+    <div class="page-title">
+      <h1>Team Directory</h1>
+      <p>// MANAGE · SEARCH · TRACK — DEVOPS PIPELINE ACTIVE</p>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-label">Total Employees</div>
+        <div class="stat-value" id="stat-total">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active</div>
+        <div class="stat-value" id="stat-active" style="color:var(--success)">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">On Leave</div>
+        <div class="stat-value" id="stat-leave" style="color:var(--warn)">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Departments</div>
+        <div class="stat-value" id="stat-depts" style="color:var(--accent2)">0</div>
+      </div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="controls">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search by name, role, or department..." oninput="handleSearch()" />
+      </div>
+      <button class="btn-add" onclick="openModal()">
+        ＋ Add Employee
+      </button>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Employee</th>
+            <th>Role</th>
+            <th>Department</th>
+            <th>Status</th>
+            <th class="hide-sm">Joined</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="employeeTable">
+          <!-- Rows injected by JS -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- ADD EMPLOYEE MODAL -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h2>Add Employee</h2>
+      <div class="modal-sub">// Fill in the details below</div>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Full Name</label>
+          <input type="text" id="f-name" placeholder="e.g. Rahul Verma" />
+        </div>
+        <div class="form-group">
+          <label>Role / Position</label>
+          <input type="text" id="f-role" placeholder="e.g. DevOps Engineer" />
+        </div>
+        <div class="form-group">
+          <label>Department</label>
+          <select id="f-department">
+            <option value="Engineering">Engineering</option>
+            <option value="Product">Product</option>
+            <option value="Design">Design</option>
+            <option value="Marketing">Marketing</option>
+            <option value="HR">HR</option>
+            <option value="Finance">Finance</option>
+            <option value="Operations">Operations</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Email</label>
+          <input type="email" id="f-email" placeholder="e.g. rahul@company.com" />
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="f-status">
+            <option value="Active">Active</option>
+            <option value="On Leave">On Leave</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-submit" onclick="addEmployee()">Add Employee</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    let allEmployees = [];
+
+    async function loadEmployees(search = '') {
+      const url = search ? `/api/employees?search=${encodeURIComponent(search)}` : '/api/employees';
+      const res = await fetch(url);
+      allEmployees = await res.json();
+      renderTable(allEmployees);
+      updateStats(allEmployees);
+    }
+
+    function updateStats(employees) {
+      document.getElementById('stat-total').textContent = employees.length;
+      document.getElementById('stat-active').textContent = employees.filter(e => e.status === 'Active').length;
+      document.getElementById('stat-leave').textContent = employees.filter(e => e.status === 'On Leave').length;
+      const depts = new Set(employees.map(e => e.department));
+      document.getElementById('stat-depts').textContent = depts.size;
+    }
+
+    function renderTable(employees) {
+      const tbody = document.getElementById('employeeTable');
+      if (employees.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="icon">📋</div>No employees found</div></td></tr>`;
+        return;
+      }
+      tbody.innerHTML = employees.map((e, i) => `
+        <tr style="animation-delay:${i * 0.04}s">
+          <td>
+            <div class="emp-name">${e.name}</div>
+            <div class="emp-email">${e.email}</div>
+          </td>
+          <td>${e.role}</td>
+          <td><span class="dept-badge">${e.department}</span></td>
+          <td><span class="status-badge ${statusClass(e.status)}">
+            <span style="width:5px;height:5px;border-radius:50%;background:currentColor;display:inline-block"></span>
+            ${e.status}
+          </span></td>
+          <td class="hide-sm" style="font-family:var(--mono);font-size:12px;color:var(--muted)">${e.joinDate}</td>
+          <td><button class="btn-delete" onclick="deleteEmployee('${e.id}')">✕ Remove</button></td>
+        </tr>
+      `).join('');
+    }
+
+    function statusClass(s) {
+      if (s === 'Active') return 'status-active';
+      if (s === 'On Leave') return 'status-leave';
+      return 'status-inactive';
+    }
+
+    function handleSearch() {
+      const q = document.getElementById('searchInput').value;
+      loadEmployees(q);
+    }
+
+    function openModal() {
+      document.getElementById('modalOverlay').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('open');
+      ['f-name','f-role','f-email'].forEach(id => document.getElementById(id).value = '');
+    }
+
+    async function addEmployee() {
+      const name = document.getElementById('f-name').value.trim();
+      const role = document.getElementById('f-role').value.trim();
+      const department = document.getElementById('f-department').value;
+      const email = document.getElementById('f-email').value.trim();
+      const status = document.getElementById('f-status').value;
+
+      if (!name || !role || !email) {
+        showToast('⚠ Please fill in all required fields', '#ffab00');
+        return;
+      }
+
+      await fetch('/api/employees', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ name, role, department, email, status })
+      });
+
+      closeModal();
+      loadEmployees();
+      showToast('✓ Employee added successfully');
+    }
+
+    async function deleteEmployee(id) {
+      if (!confirm('Remove this employee?')) return;
+      await fetch(`/api/employees/${id}`, { method: 'DELETE' });
+      loadEmployees();
+      showToast('✓ Employee removed');
+    }
+
+    function showToast(msg, color = 'var(--success)') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.borderColor = color;
+      t.style.color = color;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2800);
+    }
+
+    // Close modal on overlay click
+    document.getElementById('modalOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    // Initial load
+    loadEmployees();
+  </script>
+</body>
+</html>
