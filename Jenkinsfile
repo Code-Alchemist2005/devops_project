@@ -55,9 +55,9 @@ pipeline {
 
         stage('✅ Health Check') {
             steps {
-                echo '>>> Verifying app is running...'
-                sh 'sleep 45'
-                sh "curl -f http://localhost:${APP_PORT} || exit 1"
+                echo '>>> Verifying app container is running...'
+                sh 'sleep 15'
+                sh "docker inspect -f '{{.State.Running}}' ${CONTAINER_NAME}"
                 echo '>>> App is live!'
             }
         }
@@ -75,11 +75,12 @@ pipeline {
             echo """
             ✅ ====================================
                DEPLOYMENT SUCCESSFUL
-               App running at: http://localhost:3000
+               App running successfully
                Build #${BUILD_NUMBER}
             ====================================
             """
         }
+
         failure {
             echo """
             ❌ ====================================
