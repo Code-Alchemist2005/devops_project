@@ -56,7 +56,7 @@ pipeline {
         stage('✅ Health Check') {
             steps {
                 echo '>>> Verifying app is running...'
-                sh 'sleep 5'
+                sh 'sleep 15'
                 sh "curl -f http://localhost:${APP_PORT} || exit 1"
                 echo '>>> App is live!'
             }
