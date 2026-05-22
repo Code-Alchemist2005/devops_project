@@ -13,7 +13,7 @@ pipeline {
             steps {
                 echo '>>> Cloning code from GitHub...'
                 git branch: 'main',
-                    url: 'https://github.com/YOUR_USERNAME/employee-mgmt-devops.git'
+                    url: 'https://github.com/YOUR_USERNAME/devops_CICD_project.git'
             }
         }
 
